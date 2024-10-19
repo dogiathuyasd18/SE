@@ -4606,4 +4606,12 @@ html {
   margin-top: 30px;
 }
 
+#hero {
+  background-image: url("./assets/img/slideshow/item-1.png");
+  height: 90vh;
+  width: 100%;
+}
 /*# sourceMappingURL=main.css.map */
+
+
+        
