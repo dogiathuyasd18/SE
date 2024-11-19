@@ -1,6 +1,6 @@
 import $ from 'jquery';
 const NAME='Direct Chat'
-const DATA_KEY = 'lte.directChat'
+const DATA_KEY = 'directChat'
 const EVENT_KEY = `.${DATA_KEY}`
 const JQUERY_NO_CONFLICT = $.fn[NAME]
 const EVENT_TOGGLED= `toggled${EVENT_KEY}`

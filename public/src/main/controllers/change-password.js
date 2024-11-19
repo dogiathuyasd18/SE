@@ -1,4 +1,4 @@
-const User = require("../models/User.js")
+const User = require("../../../../models/User.js")
 const {errorMessage,validateChangePasswordForm} = require("../validations/User.js");
 const {hashPassword,checkPassword} = require("../auth/auth.js");
 //Handles user password

@@ -1,32 +1,21 @@
-const User=require('../models/User')
+const User=require('../../../../models/User')
 export const deleteUser=async(req,res)=>{
-    const id=req.params.id;
+    const {id}=req.params;
     try{
-        //Check if a user with the id exists
-        const user=await User.findById({_id:id});
+        //Check if a user with the given ID exists
+        const user=await User.findOne({where:{userId:id}});
         //If the user exists, delete the user
-        if(user){
-            //Check if its the account logged in 
-            if(user._id.toString()===req.user._id.toString()){
-                //ID== current logged in 
-                //Delete the user
-                const deletedUser= await User.findByIdAndDelete({_id:id});
-                res.status(200).json({message:'User deleted successfully',
-                user:{name:deletedUser.name},
-                });
-            }else{
-                //ID=other users ID
-                res.status(400).json({
-                    message:"Cannot delete another user's account"
-                });
-            }
-        }else{
-            //User does not exist or wrong ID
-            res.status(404).json({
-                message:"User not found",
-                id:req.params.id,
-            });
+        if(!user){
+            //User does not exist
+            return res.status(404).json({message:"User not found",id,});
         }
+        //Check if the userId matches the logged-in user's ID
+        if(user.userId != req.user.userId){
+            return res.status(403).json({message:"You are not authorized to delete this user.",});
+        }
+        //Delete the user
+        await user.destroy();
+        return res.status(200).json({message:"User has been deleted.",user:{name:user.name},});
     }catch(err){
         res.status(500).json({message:err.message});
     }

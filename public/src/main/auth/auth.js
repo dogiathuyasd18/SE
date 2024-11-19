@@ -1,6 +1,6 @@
 const bcrypt=require('bcrypt')
 const jwt=require('jsonwebtoken')
-const User=require('../models/User')
+const User=require('../../../../models/User')
 //Hash user password and save user to database
 export const hashedPassword=async (password)=>{
     const salt=await bcrypt.genSalt(10);
@@ -8,8 +8,8 @@ export const hashedPassword=async (password)=>{
 
     return hashedPassword;
 }
-//Check if pass is true
 
+//Check if password matches the hashed password
 export const comparePassword=async (password,userPassword)=>{
     const isMatch=await bcrypt.compare(password,userPassword);
     return isMatch;
@@ -19,41 +19,37 @@ export const comparePassword=async (password,userPassword)=>{
 export const authorizedRoutes = async (req, res, next) => {
     // Check if user is authenticated
     try {
-        let userToken;
+        //Get the token from the authorized header
+        const authorizationHeader=req.header('Authorization');
+        const userToken=authorizationHeader ? authorizationHeader.replace('Bearer ',''):null;
 
-        // Check if the request has the required header
-        if (req.header("Authorization")) {
-            userToken = req.header("Authorization").replace("Bearer ", "");
-        }
-
-        // Check if token is valid
-        if (userToken) {
-            const verifyToken = jwt.verify(
-                userToken,
-                process.env.ACCESS_TOKEN_SECRET
-            );
-
-            // Check if the token is still attached to a user
-            const user = await User.findById({ _id: verifyToken.id });
-
-            if (user) {
-                req.user = user._id;
-            } else {
-                return res.status(403).json({
-                    // User deleted account and token is still valid
-                    message:
-                        "There is no current user that this token is attached to.",
-                });
-            }
-
-            // Proceed to the next handler
-            next();
-        } else {
-            res.status(401).json({
+        // Check if the token exists
+        if (!userToken) {
+            return res.status(401).json({
                 message: "You are not authorized to access this page.",
             });
         }
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+        //Verify token
+        const verifyToken=jwt.verify(userToken,process.env.ACCESS_TOKEN_SECRET);
+
+        //Find the user by ID(from the token payload)
+        const user=await User.findByPk(verifyToken.id);
+
+        if(!user){
+            return res.status(403).json({
+                message:"There is no current user that this token is attached to."
+            });
+        }
+        req.user=user.userId;
+        next();
+    }catch (error) {
+        //Token verification error on other errors
+        if(error.name==="JsonWebTokenError"){
+            return res.status(403).json({message:"Invalid token"});
+        }
+        if(error.name==="TokenExpiredError"){
+            return res.status(403).json({message:"Token expired"});
+        }
+        return res.status(500).json({message:error.message});
     }
 };

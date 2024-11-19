@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken'
-import User from "../../../../models/User.js";
+const jwt= require('jsonwebtoken');
+const {User}=require ("../../../../models/User.js");
 const {errorMessage,validateChangePasswordForm} = require("../validations/User.js");
 const {comparePassword} = require("../auth/auth.js");
 //Handles user login

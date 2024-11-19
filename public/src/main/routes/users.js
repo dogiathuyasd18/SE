@@ -1,13 +1,13 @@
-import express from 'express';
-const router=express.Router();
+const express = require('express');
+const router = express.Router();
 //Import the user controller
-import {loginUser} from '../controllers/login.js';
-import {registerUser} from '../controllers/register.js';
-import {isTokenValid} from '../controllers/isTokenValid.js';
-import {userProfile} from '../controllers/profile.js';
-import {changePassword} from '../controllers/change-password.js';
-import {deleteUser} from '../controllers/delete.js';
-import { authorizedRoutes } from '../auth/auth.js';
+const { loginUser } = require('../controllers/login.js');
+const { registerUser } = require('../controllers/register.js');
+const { isTokenValid } = require('../controllers/isTokenValid.js');
+const { userProfile } = require('../controllers/profile.js');
+const { changePassword } = require('../controllers/change-password.js');
+const { deleteUser } = require('../controllers/delete.js');
+const { authorizedRoutes } = require('../auth/auth.js');
 //User login route
 
 router.post("/login",loginUser);

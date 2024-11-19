@@ -1,12 +1,12 @@
 'use strict'
-const Customer = require("../models/User")
+const User = require("../../../../models/User")
 const bcrypt=require('bcrypt')
 const asyncHandler=require('express-async-handler'); 
 class accessService {
     static signUp = async ({name,email,password}) => {
         try{
             //check if user exists
-            const holderlUsers= await Customer.findOne({where:{email}}).lean();
+            const holderlUsers= await User.findOne({where:{email}}).lean();
             if(holderlUsers){
                 return{
                     code:'20002',
@@ -16,7 +16,7 @@ class accessService {
             }
             
             const passwordHash=await bcrypt.hash(password,10);
-            const newUser = await Customer.create({name,email,password:passwordHash,tier});
+            const newUser = await User.create({name,email,password:passwordHash,tier});
         }catch(err){
             return{
             code:'...',

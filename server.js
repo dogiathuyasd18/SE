@@ -1,12 +1,12 @@
 // server.js
-import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import sequelize from './public/src/main/utilities/Database.js';
-
+const express = require('express');
+const{sequelize,testConnection} = require('./public/src/main/utilities/Database.js');
+const dotenv=require('dotenv');
 dotenv.config();
-
 const app = express();
+// Middleware setup
+app.use(express.json({ limit: "30mb", extended: true }));
+app.use(express.urlencoded({ limit: "30mb", extended: true }));
 
 // Test the database connection
 async function testConnection() {
@@ -17,22 +17,9 @@ async function testConnection() {
         console.error('Unable to connect to the database:', error);
     }
 }
-
 testConnection();
 
-// Middleware setup
-app.use(express.json({ limit: "30mb", extended: true }));
-app.use(express.urlencoded({ limit: "30mb", extended: true }));
-app.use(cors());
 
-// Define routes
-app.post('/login', async (req, res) => {
-    res.send('Login route');
-});
-
-app.post('/register', async (req, res) => {
-    res.send('Register route');
-});
 
 // Server listening
 const PORT = process.env.PORT || 3005;
