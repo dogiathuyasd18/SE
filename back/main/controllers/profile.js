@@ -1,6 +1,6 @@
-const User=require( "../../models/User.js");
+const {User}=require( "../../models/User.js");
 //Handles user profile update
-export const userProfile=async (req,res)=>{
+const userProfile=async (req,res)=>{
     try{
         const userId= req.user;
         //Retrieve user by primary key Sequelize

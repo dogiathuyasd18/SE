@@ -1,17 +1,12 @@
 const express=require('express');
-const app=express();
 const axios=require('axios');
 const crypto=require('crypto');
-const {urlencoded}=require('body-parser');
 const config=require('./config-payment.js');
-//Middleware
-app.use(express.json());
-app.use (express.urlencoded({extended:true}));
-app.use(urlencoded({extended:false}));
+const router=express.Router();
 
 //Payment Link
 
-app.post("/payment",async (req,res)=>{
+router.post("/payment",async (req,res)=>{
     let{
         accessKey,
         secretKey,
@@ -93,7 +88,7 @@ app.post("/payment",async (req,res)=>{
     }
 });
 
-app.post("/callback",async (req,res)=>{
+router.post("/callback",async (req,res)=>{
     console.log("Callback: ");
     console.log(req.body);
     /** 
@@ -114,7 +109,7 @@ app.post("/callback",async (req,res)=>{
     //Update order
     return res.status(200).json(req.body);
 });
-app.post("/transaction-status",async (req,res)=>{
+router.post("/transaction-status",async (req,res)=>{
     const{orderId}=req.body;
     var secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
     var accessKey = 'F8BBA842ECF85';
@@ -143,6 +138,4 @@ app.post("/transaction-status",async (req,res)=>{
     const result=await axios(options);
     return res.status(200).json(result.data);
 });
-app.listen(5000,()=>{
-    console.log("Server is running on port 5000");
-})
+module.exports=router;

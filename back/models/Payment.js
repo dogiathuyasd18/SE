@@ -1,4 +1,4 @@
-import {DataTypes,Model} from 'sequelize' 
+const {Model,DataTypes}=require('sequelize');
 class Payment extends Model{}
 Payment.init({
     PaymentID:{
@@ -25,4 +25,4 @@ Payment.init({
     tableName:'Payments',
     timestamps:false,
 });
-export default Payment
+module.exports={Payment};

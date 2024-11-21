@@ -1,6 +1,6 @@
 
 import { DataTypes,Model} from 'sequelize'; // Adjust the path to your sequelize instance
-import sequelize from './Database.js'
+import sequelize from '../main/utilities/Database.js'
 
 class User extends Model {}
 User.init({
@@ -50,4 +50,4 @@ User.init({
     modelName: 'User', // Choose the model name
   }
 );
-export default User;
+module.exports={User}; // Export the model

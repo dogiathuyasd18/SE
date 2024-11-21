@@ -1,4 +1,4 @@
-import {DataTypes,Model} from 'sequelize'
+const {Model,DataTypes}=require('sequelize');
 class Order extends Model{}
 Order.init({
     OrderId:{
@@ -26,4 +26,4 @@ Order.init({
     tableName:'Orders',
     timestamps:false,
     });
-export default Order
+module.exports={Order};

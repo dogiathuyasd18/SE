@@ -1,5 +1,5 @@
 const jwt= require('jsonwebtoken');
-const User=require ("../../models/User.js");
+const {User}=require ("../../models/User.js");
 const {validateLoginForm} = require("../validations/User.js");
 const {comparePassword} = require("../auth/auth.js");
 //Handles user login

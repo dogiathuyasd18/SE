@@ -1,6 +1,6 @@
 const dotenv=require('dotenv');
 dotenv.config();
-const {Sequelize}=require ('sequelize');
+const {Sequelize}=require('sequelize');
 
 const sequelize = new Sequelize(
     process.env.ORACLE_DATABASE,
@@ -31,10 +31,15 @@ const closeConnection = async () => {
         try{
             await sequelize.close();
             console.log('OracleDB connection closed');
-        }catch(err){
-            console.error('Unable to close OracleDB connection:', err);
+        }catch(error){
+            console.error('Unable to close OracleDB connection:', error.message);
             process.exit(1);
         }
     }
 }
+process.on('SIGINT',async()=>{
+    console.log('SIGINT received.Closing OracleDB connection');
+    await closeConnection();
+    process.exit(0);
+});
 module.exports = {sequelize,testConnection,closeConnection};

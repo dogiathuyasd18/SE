@@ -1,4 +1,4 @@
-const User=require('../../models/User')
+const {User}=require('../../models/User')
 const deleteUser=async(req,res)=>{
     const {id}=req.params;
     try{
@@ -20,4 +20,4 @@ const deleteUser=async(req,res)=>{
         res.status(500).json({message:err.message});
     }
 };
-module.exports=deleteUser;
+module.exports={deleteUser};

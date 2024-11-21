@@ -1,4 +1,4 @@
-import {DataTypes,Model} from 'sequelize'
+const {Model,DataTypes}=require('sequelize');
 
 class Inventory extends Model{}
 Inventory.init({
@@ -20,4 +20,4 @@ Inventory.init({
     tableName:'Inventories',
     timestamps:false,
 });
-export default Inventory;
+module.exports={Inventory};

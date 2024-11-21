@@ -26,4 +26,4 @@ class accessService {
         }
     }
 }
-module.exports = accessService;
+module.exports = {accessService};
