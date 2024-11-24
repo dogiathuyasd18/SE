@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "SYS",
-    "password": "SysPassword1",
-    "database": "FREEPDB1",
-    "host": "127.0.0.1",
+    "username": "c##hito",
+    "password": "12345",
+    "database": "Fruit",
+    "host": "localhost",
     "dialect": "oracle"
   },
   "test": {
