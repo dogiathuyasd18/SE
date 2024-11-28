@@ -12,7 +12,7 @@ const sequelize = new Sequelize(
         dialect: 'oracle',               // Specify the dialect
         logging: false,
         dialectOptions: {
-        connectString: process.env.ORACLE_CONNECTION_STRING ||'localhost:1521/freepdb1', // Easy Connect syntax
+        connectString: process.env.ORACLE_CONNECTION_STRING ||'localhost:1521/XE', // Easy Connect syntax
         },
     }
 );
