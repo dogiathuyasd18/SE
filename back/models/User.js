@@ -1,7 +1,6 @@
 
-import { DataTypes,Model} from 'sequelize'; // Adjust the path to your sequelize instance
-import sequelize from '../main/utilities/Database.js'
-
+const { Model, DataTypes } = require('sequelize');
+const {sequelize} = require('../main/utilities/Database.js');
 class User extends Model {}
 User.init({
     userId: {

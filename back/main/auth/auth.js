@@ -1,8 +1,8 @@
-const bcrypt=require('bcrypt');
+const bcrypt=require('bcryptjs');
 const jwt=require('jsonwebtoken')
 const User=require('../../models/User')
 //Hash user password and save user to database
-export const hashedPassword=async (password)=>{
+const hashedPassword=async (password)=>{
     const salt=await bcrypt.genSalt(10);
     const hashedPassword=await bcrypt.hash(password,salt);
 
@@ -10,13 +10,13 @@ export const hashedPassword=async (password)=>{
 }
 
 //Check if password matches the hashed password
-export const comparePassword=async (password,userPassword)=>{
+const comparePassword=async (password,userPassword)=>{
     const isMatch=await bcrypt.compare(password,userPassword);
     return isMatch;
 }
 
 //Protect private routes from unauthorized access
-export const authorizedRoutes = async (req, res, next) => {
+const authorizedRoutes = async (req, res, next) => {
     // Check if user is authenticated
     try {
         //Get the token from the authorized header
