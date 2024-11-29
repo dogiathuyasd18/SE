@@ -1,5 +1,6 @@
 import db from '../models/index.js';
 import CRUDService from '../services/CRUDService.js';
+
 let getHomePage = async (req, res) => {
     try {
         let data = await db.User.findAll();
@@ -169,9 +170,10 @@ let getCart = (req,res) => {
     return res.render('cart.ejs')
 }
 let getcheckout = async (req, res) => {
-    // const total = await document.getElementById('total').value;
-    const total = await 999
-    console.log(total)
+    console.log("Get Checkout")
+    const total = req.body.total
+    // const total = await 999
+    console.log(req)
     return res.render('checkout.ejs',{total: total})
 };
 

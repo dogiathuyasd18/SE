@@ -137,9 +137,9 @@
         </div>
 
         <!-- Cart summary -->
-        <form action="./checkout" id="checkout" method="post">
+        <form action="/checkout" id="checkout" method="post">
             <div class="row">
-                <div class="col-12" name="total" value="999">
+                <div class="col-12">
                     <div class="cart-summary">
                         <div class="cart-summary__row">
                             <span>Subtotal:</span>
@@ -153,14 +153,15 @@
                         <div class="cart-summary__row cart-summary__row--bold">
                             <span>Total:</span>
                             <span id="total">$100.00</span>
+                            <!-- Hidden input to send the total value in the form -->
+                            <input type="hidden" name="total" value="100">
                         </div>
-                        <a href="./checkout" class="cart-summary__next-btn btn btn--primary btn--rounded">
-                            Proceed to Checkout
-                        </a>
+                        <input type="submit" value="submit">
                     </div>
                 </div>
             </div>
         </form>
+        
         </div>
         </div>
     </main>

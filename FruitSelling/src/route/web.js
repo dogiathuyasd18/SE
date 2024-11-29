@@ -25,7 +25,7 @@ let initWebRoutes = (app) => {
 
     router.get('/payment',homeController.getpayment);
     router.get('/favourite',homeController.favourite);
-    router.get('/checkout',homeController.getcheckout);
+    router.post('/checkout',homeController.getcheckout);
     router.get('/edit-personal-info',homeController.getEdit);
     router.get('/add-new-card',homeController.addCard);
     router.get('/add-to-cart',homeController.addtoCart)

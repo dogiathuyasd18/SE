@@ -229,82 +229,84 @@ window.addEventListener("template-loaded", () => {
 const isDark = localStorage.dark === "true";
 document.querySelector("html").classList.toggle("dark", isDark);
 
+document.addEventListener('DOMContentLoaded', function () {
+    // Function to handle quantity changes
+    function changeQuantity(itemId, delta) {
+        const item = document.querySelector(`[data-item="${itemId}"]`);
+        const quantityEl = item.querySelector('.quantity');
+        const totalPriceEl = item.querySelector('.cart-item__total-price');
+        const price = parseFloat(item.dataset.price);
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // Function to handle quantity changes
-        function changeQuantity(itemId, delta) {
-            const item = document.querySelector(`[data-item="${itemId}"]`);
-            const quantityEl = item.querySelector('.quantity');
-            const totalPriceEl = item.querySelector('.cart-item__total-price');
-            const price = parseFloat(item.dataset.price);
-
-            // Update the quantity
-            let quantity = parseInt(quantityEl.innerText) + delta;
-            if (quantity < 1) {
-                quantity = 0; // Minimum quantity is 0
-            }
-            quantityEl.innerText = quantity;
-
-            // Update the total price for this item
-            const totalItemPrice = quantity * price;
-            totalPriceEl.innerText = `$${totalItemPrice.toFixed(2)}`;
-
-            // Recalculate subtotal and total
-            updateCartTotals();
+        // Update the quantity
+        let quantity = parseInt(quantityEl.innerText) + delta;
+        if (quantity < 1) {
+            quantity = 0; // Minimum quantity is 0
         }
+        quantityEl.innerText = quantity;
 
-        // Function to calculate subtotal and total
-        function updateCartTotals(req,res,total) {
-            let subtotal = 0;
+        // Update the total price for this item
+        const totalItemPrice = quantity * price;
+        totalPriceEl.innerText = `$${totalItemPrice.toFixed(2)}`;
 
-            // Sum up the total prices of all items
-            document.querySelectorAll('.cart-item').forEach((item) => {
-                const quantity = parseInt(item.querySelector('.quantity').innerText);
-                const price = parseFloat(item.dataset.price);
-                subtotal += quantity * price;
-            });
-
-            // Update subtotal and total in the UI
-            document.getElementById('subtotal').innerText = `$${subtotal.toFixed(2)}`;
-            // Add shipping fee (fixed at $10 for this example)
-            document.getElementById('total').innerText = `$${(subtotal + 10).toFixed(2)}`; // Shipping is $10
-            total = document.getElementById('total').innerText
-            return res.render("")
-        }
-
-        // Event listeners for quantity buttons (decrease and increase)
-        document.querySelectorAll('.decrease').forEach(button => {
-            button.addEventListener('click', function () {
-                const itemId = button.getAttribute('data-item');
-                changeQuantity(itemId, -1); // Decrease quantity
-            });
-        });
-
-        document.querySelectorAll('.increase').forEach(button => {
-            button.addEventListener('click', function () {
-                const itemId = button.getAttribute('data-item');
-                changeQuantity(itemId, 1); // Increase quantity
-            });
-        });
-
-        // Event listener for remove item buttons
-        document.querySelectorAll('.remove-item').forEach(button => {
-            button.addEventListener('click', function () {
-                const itemId = button.getAttribute('data-item');
-                removeItemFromCart(itemId);
-            });
-        });
-
-        // Function to remove an item from the cart
-        function removeItemFromCart(itemId) {
-            const item = document.querySelector(`[data-item="${itemId}"]`);
-            item.remove(); // Remove the item from the DOM
-
-            // Recalculate the cart totals after removal
-            updateCartTotals();
-        }
-
-        // Initial cart total calculation on page load
+        // Recalculate subtotal and total
         updateCartTotals();
+    }
+
+    // Function to calculate subtotal and total
+    function updateCartTotals() {
+        let subtotal = 0;
+
+        // Sum up the total prices of all items
+        document.querySelectorAll('.cart-item').forEach((item) => {
+            const quantity = parseInt(item.querySelector('.quantity').innerText);
+            const price = parseFloat(item.dataset.price);
+            subtotal += quantity * price;
+        });
+
+        // Update subtotal and total in the UI
+        document.getElementById('subtotal').innerText = `$${subtotal.toFixed(2)}`;
+        
+        // Add shipping fee (fixed at $10 for this example)
+        const total = subtotal + 10;
+        document.getElementById('total').innerText = `$${total.toFixed(2)}`; // Shipping is $10
+
+        // Update the hidden input with the new total
+        const hiddenTotalInput = document.querySelector('input[name="total"]');
+        hiddenTotalInput.value = total.toFixed(2); // Set the value of the hidden input field
+    }
+
+    // Event listeners for quantity buttons (decrease and increase)
+    document.querySelectorAll('.decrease').forEach(button => {
+        button.addEventListener('click', function () {
+            const itemId = button.getAttribute('data-item');
+            changeQuantity(itemId, -1); // Decrease quantity
+        });
     });
 
+    document.querySelectorAll('.increase').forEach(button => {
+        button.addEventListener('click', function () {
+            const itemId = button.getAttribute('data-item');
+            changeQuantity(itemId, 1); // Increase quantity
+        });
+    });
+
+    // Event listener for remove item buttons
+    document.querySelectorAll('.remove-item').forEach(button => {
+        button.addEventListener('click', function () {
+            const itemId = button.getAttribute('data-item');
+            removeItemFromCart(itemId);
+        });
+    });
+
+    // Function to remove an item from the cart
+    function removeItemFromCart(itemId) {
+        const item = document.querySelector(`[data-item="${itemId}"]`);
+        item.remove(); // Remove the item from the DOM
+
+        // Recalculate the cart totals after removal
+        updateCartTotals();
+    }
+
+    // Initial cart total calculation on page load
+    updateCartTotals();
+});
