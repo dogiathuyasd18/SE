@@ -1,13 +1,11 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import NewPassword from './pages/LoginNewPass'
 import ResetPassword from './pages/ResetPass'
 import ResetPasswordEmailSent from './pages/ResetPassEmailed'
 import Home from "./pages/Home"
 import ProductDetail from './pages/ProductInfor'
-import Account from "./pages/Account"
+import Account from "./pages/AccountPage"
 import CheckOut from './pages/Checkout'
 import EditInfo from './pages/EditInfor'
 import FavoriteList from './pages/Favourite'

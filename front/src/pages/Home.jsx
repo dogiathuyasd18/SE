@@ -291,6 +291,11 @@ const FruitShop = () => {
   return (
     <div style={styles.container}>
       {/* Hero Section */}
+      <button onClick={() => {
+        fetch("http://localhost:5000/helloworld").then(async res => {
+          console.log(await res.json())
+        })
+      }}>Hello</button>
       <div style={styles.hero}>
         <div style={styles.heroContent}>
           <h1 style={styles.heroTitle}>

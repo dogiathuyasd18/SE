@@ -134,9 +134,29 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
-    alert('Sign in successful');
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        // Save token and user data
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        // Redirect or update UI
+        window.location.href = '/account'; // Adjust the path as needed
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Error during sign-in:', error);
+      alert('An error occurred. Please try again.');
+    }
   };
 
   return (
@@ -198,14 +218,14 @@ const SignIn = () => {
               checked={remember}
               onChange={() => setRemember(!remember)}
             />
-            Set as default card
+            Remember me
             <span style={styles.forgotPassword}>Forgot password?</span>
           </div>
 
           <button type="submit" style={styles.signInButton}>Sign In</button>
 
           <button type="button" style={styles.googleButton}>
-            <img
+            <img  
               src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
               alt="Google logo"
               style={{ width: '20px', height: '20px' }}
