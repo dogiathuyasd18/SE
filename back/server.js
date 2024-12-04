@@ -1,46 +1,56 @@
-// server.js
 const express = require('express');
-const dotenv = require('dotenv');
 const cors = require('cors');
-const sequelize = require('./utilities/Database');
-const userRoutes = require('./routes/users'); // Adjust the path as necessary
+const sequelize = require('./utilities/Database'); // Sequelize instance for database connection
+const userRoutes = require('./routes/users'); // User routes
+const productRoutes = require('./routes/products'); //product routes
 
-dotenv.config(); // Load environment variables at the very beginning
+require('dotenv').config(); // Load environment variables
 
 const app = express();
 
 // Middleware setup
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(express.json()); // Parse JSON bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+app.use(cors()); // Enable CORS for cross-origin requests
 
 // Test the database connection
 (async () => {
   try {
-    // await sequelize.authenticate();
+    await sequelize.authenticate();
     console.log('Connection to the database has been established successfully.');
-
-    // Sync models if needed (be cautious with force: true as it will drop tables)
-    // await sequelize.sync({ force: false });
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
 })();
 
-// Define routes
-app.use('/api/users', userRoutes); // Use user routes under /api/users
+// API Routes
+app.use('/api/users', userRoutes); // User-related routes
+app.use('/api/products', productRoutes); // Example product-related routes
+
+// Health check endpoint (useful for monitoring and debugging)
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    uptime: process.uptime(),
+    timestamp: new Date(),
+  });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-  res.status(statusCode).json({ message: 'Internal Server Error' });
+  res.status(statusCode).json({
+    message: err.message || 'Internal Server Error',
+    stack: process.env.NODE_ENV === 'production' ? undefined : err.stack, // Hide stack trace in production
+  });
 });
 
-app.get("/helloworld", (req, res) => {
-    console.log("có đứa mới request")
-    res.json("hello");
-})
+// Test route for basic API functionality
+app.get('/helloworld', (req, res) => {
+  console.log('Có đứa request lên server');
+  res.json({ message: 'Hello, World!' });
+});
 
 // Server listening
 const PORT = process.env.PORT || 5000;

@@ -1,37 +1,58 @@
 const express = require('express');
+const { body, validationResult } = require('express-validator');
+const asyncHandler = require('express-async-handler');
 const { loginUser, registerUser, getUserProfile } = require('../controllers/userControllers');
 const { protect } = require('../middleware/authMiddleware');
-const jwt = require('jsonwebtoken');
+const { changePassword } = require('../controllers/change-password');
+const { deleteUser } = require('../controllers/delete');
+const { isTokenValid } = require('../controllers/isTokenValid');
 const router = express.Router();
 
-// Import user controller
-const { isTokenValid } = require('../controllers/isTokenValid.js');
-const { userProfile } = require('../controllers/profile.js');
-const { changePassword } = require('../controllers/change-password.js');
-const { deleteUser } = require('../controllers/delete.js');
-const { authorizedRoutes } = require('../auth/auth.js');
-
-
-// User login route
-router.post("/login", loginUser);
-// User register route
-router.post('/register', async (req, res) => {
-    try {
-      const user = await User.create(req.body);
-      res.status(201).json({ message: 'User registered successfully' });
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
+// Rate Limiting
+const rateLimit = require('express-rate-limit');
+const loginLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 5, // Max 5 requests per minute
+  message: { success: false, message: 'Too many login attempts, please try again later' },
 });
-// User token validation route
-router.get("/isTokenValid", authorizedRoutes, isTokenValid);
-// User profile endpoint
-router.get('/profile', protect, getUserProfile);
-// User change password endpoint
-router.post("/change-password", authorizedRoutes, changePassword);
-// User delete account endpoint
-router.delete("/delete", authorizedRoutes, deleteUser);
-// GET /api/users/profile
 
+// Routes
+router.post(
+  '/login',
+  loginLimiter,
+  [
+    body('email').isEmail().withMessage('Please provide a valid email'),
+    body('password').notEmpty().withMessage('Password is required'),
+  ],
+  asyncHandler(loginUser)
+);
+
+router.post(
+  '/register',
+  [
+    body('email').isEmail().withMessage('Please provide a valid email'),
+    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+    body('name').notEmpty().withMessage('Name is required'),
+  ],
+  asyncHandler(async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.array() });
+    }
+
+    const user = await registerUser(req.body);
+    res.status(201).json({ success: true, message: 'User registered successfully', data: user });
+  })
+);
+
+router.get('/isTokenValid', protect, asyncHandler(isTokenValid));
+router.get('/profile', protect, asyncHandler(getUserProfile));
+router.post(
+  '/change-password',
+  protect,
+  [body('password').isLength({ min: 6 }).withMessage('New password must be at least 6 characters long')],
+  asyncHandler(changePassword)
+);
+router.delete('/delete', protect, asyncHandler(deleteUser));
 
 module.exports = router;

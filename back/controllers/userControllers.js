@@ -18,7 +18,8 @@ const loginUser = async (req, res) => {
         expiresIn: '1h',
       });
 
-      res.json({
+      return res.status(200).json({
+        success: true,
         token,
         user: {
           id: user.id,
@@ -27,12 +28,9 @@ const loginUser = async (req, res) => {
           // Include other user details as needed
         },
       });
-    } else {
-      res.status(401).json({ message: 'Invalid email or password' });
-    }
+    }  res.status(401).json({ success: false, message: 'Invalid email or password' });
   } catch (error) {
-    console.error('Error during login:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -46,7 +44,7 @@ const registerUser = async (req, res) => {
     const userExists = await User.findOne({ where: { email } });
 
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({success: false, message: 'User already exists' });
     }
 
     // Hash password
@@ -66,6 +64,7 @@ const registerUser = async (req, res) => {
     });
 
     res.status(201).json({
+      success: true,
       token,
       user: {
         id: user.id,
@@ -89,13 +88,36 @@ const getUserProfile = async (req, res) => {
     });
 
     if (user) {
-      res.json(user);
-    } else {
-      res.status(404).json({ message: 'User not found' });
+      return res.status(200).json({ success: true, data: user });
     }
+    res.status(404).json({ success: false, message: 'User not found' });
   } catch (error) {
-    console.error('Error fetching user profile:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+
+// @desc Change user password
+const changePassword = async (req, res) => {
+  try {
+    const { password } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await User.update({ password: hashedPassword }, { where: { id: req.user.id } });
+
+    res.status(200).json({ success: true, message: 'Password updated successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+// @desc Delete user account
+const deleteUser = async (req, res) => {
+  try {
+    await User.destroy({ where: { id: req.user.id } });
+    res.status(200).json({ success: true, message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
